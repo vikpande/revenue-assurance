@@ -853,6 +853,28 @@ blockquote footer { margin-top: 6px; color: var(--muted); font-size: 13px; }
 .workspace-result li a { color: var(--ink); font-weight: 600; }
 .workspace-result li span { margin-left: 12px; color: var(--settled); font-size: 13px; }
 .workspace-result li p { max-width: 70ch; margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+.similarity-list { display: grid; gap: 12px; }
+.similarity-card { padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: rgba(50, 53, 61, .65); }
+.similarity-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.similarity-heading > a { color: var(--ink); font-weight: 600; }
+.similarity-score { flex: 0 0 auto; color: var(--settled); font-size: 14px; font-weight: 700; text-align: right; }
+.similarity-score small { display: block; color: var(--muted); font-size: 11px; font-weight: 500; }
+.similarity-card > p { max-width: 75ch; margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.similarity-details { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.similarity-details summary { width: fit-content; color: var(--steel); font-size: 13px; cursor: pointer; }
+.similarity-graph { display: grid; grid-template-columns: minmax(0, 1fr) 110px minmax(0, 1fr) 100px minmax(0, .8fr); align-items: center; gap: 10px; padding: 18px 0 8px; }
+.similarity-node { display: flex; min-width: 0; min-height: 112px; flex-direction: column; justify-content: center; gap: 5px; padding: 14px; border: 1px solid #59616b; border-radius: 12px; background: #2d3037; color: var(--ink); text-decoration: none; }
+.similarity-node:hover { border-color: var(--copper); text-decoration: none; }
+.similarity-current { border-color: #79644a; background: #39342f; }
+.similarity-node-label { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.similarity-node strong { font-size: 13px; line-height: 1.35; }
+.similarity-node small { display: -webkit-box; overflow: hidden; color: #b7bac2; font-size: 11px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.similarity-edge { position: relative; display: flex; justify-content: center; color: #d3b28e; text-align: center; }
+.similarity-edge::before { position: absolute; top: 50%; right: 0; left: 0; height: 1px; background: #76624f; content: ""; }
+.similarity-edge span { z-index: 1; padding: 4px 6px; background: #32353d; font-size: 10px; line-height: 1.35; }
+.similarity-edge-case { color: var(--muted); }
+.similarity-edge-case::before { background: #59616b; }
+.similarity-caveat { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
 .draft-heading { display: flex; justify-content: space-between; gap: 15px; }
 .draft-editor > label { display: block; margin: 14px 0; color: var(--muted); font-size: 13px; font-weight: 600; }
 .draft-editor input, .draft-editor textarea { display: block; width: 100%; margin-top: 6px; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--card); color: var(--ink); font: inherit; font-size: 15px; }
@@ -869,6 +891,12 @@ blockquote footer { margin-top: 6px; color: var(--muted); font-size: 13px; }
   .workspace-subtitle { margin-left: 0; }
   .workspace-top nav { gap: 12px; }
   .workspace-top nav a { padding: 10px 0; }
+  .similarity-heading { gap: 10px; }
+  .similarity-graph { grid-template-columns: 1fr; gap: 6px; padding-top: 14px; }
+  .similarity-node { min-height: 88px; }
+  .similarity-edge { min-height: 24px; align-items: center; }
+  .similarity-edge::before { top: 0; bottom: 0; left: 50%; width: 1px; height: auto; }
+  .similarity-edge span { max-width: 180px; }
   .prompt-footer select { min-height: 44px; }
   .prompt-footer button { width: 44px; height: 44px; }
   .workspace-suggestions button, .workspace-tools button { min-height: 44px; }

@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { cases } from "./fixtures";
 import { siteHref } from "./route";
+import { runCase } from "./engine";
 
 type Source = { id: string; caseId: string | null; title: string; kind: string; url: string | null };
 type Message = { role: "user" | "assistant"; text: string; sources?: Source[] };
@@ -29,6 +30,8 @@ export function WorkspaceScreen() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [sendSecret, setSendSecret] = useState("");
+  const activeCase = cases.find((item) => item.id === caseId) ?? cases[0];
+  const currentFindings = runCase(activeCase, "contract").findings;
 
   async function call<T>(path: string, data?: unknown, extraHeaders: Record<string, string> = {}): Promise<T> {
     const response = await fetch(path, { method: data ? "POST" : "GET", headers: {
@@ -155,8 +158,44 @@ export function WorkspaceScreen() {
           </article>)}
         </section>}
         {matches.length > 0 && <section className="workspace-result" aria-labelledby="analogues-title"><h2 id="analogues-title">Related evidence</h2>
-          <p>Ranked by semantic similarity. Open the source before relying on a match.</p>
-          <ul>{matches.map((match) => <li key={match.id}><a href={siteHref(match.caseId)}>{match.title}</a><span>{Math.round(match.score * 100)}% similarity</span><p>{match.excerpt}</p></li>)}</ul>
+          <p>Ranked by semantic similarity. Matches are text-based leads, not confirmation that facts or contract terms are the same.</p>
+          <div className="similarity-list">{matches.map((match) => {
+            const sourceCase = cases.find((item) => item.id === match.caseId);
+            return <article className="similarity-card" key={match.id}>
+              <div className="similarity-heading">
+                <a href={siteHref(match.caseId)}>{match.title}</a>
+                <span className="similarity-score">{Math.round(match.score * 100)}% <small>text similarity</small></span>
+              </div>
+              <p>{match.excerpt}</p>
+              <details className="similarity-details">
+                <summary>View relationship</summary>
+                <div className="similarity-graph" aria-label={`Relationship between findings in ${activeCase.name} and ${match.title} in ${sourceCase?.name ?? "another case"}`}>
+                  <div className="similarity-node similarity-current">
+                    <span className="similarity-node-label">Current search</span>
+                    <strong>{activeCase.name}</strong>
+                    <small>{currentFindings.length ? `${currentFindings.length} contract finding${currentFindings.length === 1 ? "" : "s"} · titles and narratives` : "Availability dispute · fallback search text"}</small>
+                  </div>
+                  <div className="similarity-edge">
+                    <span>Semantic text similarity</span>
+                  </div>
+                  <div className="similarity-node similarity-record">
+                    <span className="similarity-node-label">Matched {match.kind}</span>
+                    <strong>{match.title}</strong>
+                    <small>{match.excerpt}</small>
+                  </div>
+                  <div className="similarity-edge similarity-edge-case">
+                    <span>Record belongs to</span>
+                  </div>
+                  <a className="similarity-node similarity-case" href={siteHref(match.caseId)}>
+                    <span className="similarity-node-label">Source case</span>
+                    <strong>{sourceCase?.name ?? match.caseId}</strong>
+                    <small>{sourceCase?.quarterLabel ?? "Open case details"}</small>
+                  </a>
+                </div>
+                <p className="similarity-caveat">The score measures similarity between text embeddings. It does not verify shared facts, rules, or outcomes.</p>
+              </details>
+            </article>;
+          })}</div>
         </section>}
         {draft && <section className="workspace-result draft-editor" aria-labelledby="draft-title"><div className="draft-heading"><div><h2 id="draft-title">{draft.kind === "alert" ? "Alert draft" : "Claim pack draft"}</h2><p>Review the facts, citations, recipient, and wording before sending.</p></div><span className="pill">{draft.status}</span></div>
           <label>To<input type="email" value={draft.recipient} disabled={draft.status === "sent"} onChange={(event) => setDraft({ ...draft, recipient: event.target.value })} /></label>
